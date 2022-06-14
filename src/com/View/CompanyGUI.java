@@ -186,8 +186,6 @@ public class CompanyGUI extends JFrame{
             mdl_addition_list.addRow(row_addition_list);
 
         }
-
-
     }
 
 
