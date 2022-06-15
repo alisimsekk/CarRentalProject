@@ -52,8 +52,9 @@ public class CarAddGUI extends JFrame {
                 String transmission = cmb_transmission.getSelectedItem().toString();
                 String fuel = cmb_fuel.getSelectedItem().toString();
                 int company_id = company.getId();
+                String city = company.getCity();
 
-                if (Car.add(brand, model, type, season_start, season_end, price, transmission, fuel, company_id)){
+                if (Car.add(brand, model, type, season_start, season_end, price, transmission, fuel, company_id, city)){
                     Helper.showMsg("Araç başarı ile eklendi.");
                     fld_brand.setText(null);
                     fld_model.setText(null);
@@ -63,6 +64,7 @@ public class CarAddGUI extends JFrame {
                     fld_price.setText(null);
                     cmb_transmission.setSelectedIndex(0);
                     cmb_fuel.setSelectedIndex(0);
+
                 }
                 else {
                     Helper.showMsg("error");

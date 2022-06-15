@@ -20,8 +20,9 @@ public class Car {
     private String transmission;
     private String fuel;
     private int company_id;
+    private String city;
 
-    public Car(int id, String brand, String model, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id) {
+    public Car(int id, String brand, String model, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id, String city) {
         this.id = id;
         this.brand = brand;
         this.model = model;
@@ -32,10 +33,39 @@ public class Car {
         this.transmission = transmission;
         this.fuel = fuel;
         this.company_id = company_id;
+        this.city = city;
     }
 
     public Car() {
 
+    }
+
+// girilen anahtar kelimeye göre search metodu
+    public static ArrayList<Car> searchCarList(String query){
+        ArrayList<Car> carList = new ArrayList<>();
+        Car obj;
+        try {
+            Statement st = DBConnector.getInstance().createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()){
+                obj = new Car();
+                obj.setId(rs.getInt("id"));
+                obj.setBrand(rs.getString("brand"));
+                obj.setModel(rs.getString("model"));
+                obj.setType(rs.getString("type"));
+                obj.setSeason_start(rs.getString("season_start"));
+                obj.setSeason_end(rs.getString("season_end"));
+                obj.setPrice(rs.getInt("price"));
+                obj.setTransmission(rs.getString("transmission"));
+                obj.setFuel(rs.getString("fuel"));
+                obj.setCompany_id(rs.getInt("company_id"));
+                obj.setCity(rs.getString("city"));
+                carList.add(obj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return carList;
     }
 
 
@@ -119,6 +149,14 @@ public class Car {
         this.company_id = company_id;
     }
 
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public static ArrayList<Car> getList() {
         ArrayList<Car> carList = new ArrayList<>();
         String query = "SELECT * FROM car";
@@ -138,6 +176,7 @@ public class Car {
                 obj.setTransmission(rs.getString("transmission"));
                 obj.setFuel(rs.getString("fuel"));
                 obj.setCompany_id(rs.getInt("company_id"));
+                obj.setCity(rs.getString("city"));
                 carList.add(obj);
             }
         } catch (SQLException e) {
@@ -146,8 +185,8 @@ public class Car {
         return carList;
     }
 
-    public static boolean add(String brand, String model, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id) {
-        String query = "INSERT INTO car (brand, model, type, season_start, season_end, price, transmission, fuel, company_id) VALUES (?,?,?,?,?,?,?,?,?)";
+    public static boolean add(String brand, String model, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id, String city) {
+        String query = "INSERT INTO car (brand, model, type, season_start, season_end, price, transmission, fuel, company_id, city) VALUES (?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
             pr.setString(1,brand);
@@ -159,6 +198,7 @@ public class Car {
             pr.setString(7,transmission);
             pr.setString(8,fuel);
             pr.setInt(9,company_id);
+            pr.setString(10,city);
             int response = pr.executeUpdate();
             if (response == -1){
                 Helper.showMsg("error");
