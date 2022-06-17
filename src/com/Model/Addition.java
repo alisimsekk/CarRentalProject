@@ -6,7 +6,6 @@ import com.Helper.Helper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Addition {
@@ -78,6 +77,27 @@ public class Addition {
             e.printStackTrace();
         }
         return additionList;
+    }
+
+    public static Addition getListByID(int id) {
+        String query = "SELECT * FROM addition  WHERE id = ?";
+        Addition obj = null;
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()){
+                obj = new Addition();
+                obj.setId(rs.getInt("id"));
+                obj.setExplanation(rs.getString("explanation"));
+                obj.setPrice(rs.getInt("price"));
+                obj.setCar_id(rs.getInt("car_id"));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
     }
 
     public static boolean add(String explanation, int price, int car_id) {

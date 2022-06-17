@@ -213,7 +213,7 @@ public class CustomerGUI extends JFrame {
                     long minutes = seconds / 60;
                     long hours = minutes / 60;
                     long number_of_days = hours / 24;
-                    ReservationGUI resGUI = new ReservationGUI (c, number_of_days, check_in,  check_out);
+                    ReservationGUI resGUI = new ReservationGUI (customer, c, number_of_days, check_in,  check_out);
                 }
                 else {
                     Helper.showMsg("Seçili araç girilen tarihlerde uygun değil. Araç Filtrelemeden uygun araçları bulabilirsiniz");
