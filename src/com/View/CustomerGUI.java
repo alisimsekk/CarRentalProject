@@ -115,7 +115,6 @@ public class CustomerGUI extends JFrame {
  //araç filtreleme butonu
         btn_car_search.addActionListener(e -> {
             String city = cmb_city.getSelectedItem().toString();
-
             String carType = cmb_car_type.getSelectedItem().toString();
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -145,14 +144,14 @@ public class CustomerGUI extends JFrame {
             }
             else if (Helper.isFieldEmpty(fld_start_date) && Helper.isFieldEmpty(fld_end_date)){
                 if (searchingCar.size() == 0){
-                    Helper.showMsg("Aradığınız kriterlere uygun oda bulunamadı");
+                    Helper.showMsg("Aradığınız kriterlere uygun araç bulunamadı");
                 }
                 else {
                     loadCarModel(searchingCar);
                 }
             }
             else {
-////////////BURDAM DEVAM EDİLECEK SEARCH METODU
+////////////BURDAM DEVAM EDİLECEK SEARCH METOD
             }
 
 
