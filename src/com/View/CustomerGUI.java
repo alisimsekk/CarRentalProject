@@ -30,7 +30,6 @@ public class CustomerGUI extends JFrame {
     private JTable tbl_car_addition;
     private JButton btn_reservation;
     private JTextField fld_car_id;
-    private JTextField fld_price;
     private JComboBox cmb_city;
     private JComboBox cmb_car_type;
     private JTextField fld_start_date;
@@ -138,26 +137,88 @@ public class CustomerGUI extends JFrame {
             query = query.replace("{{city}}", city);
             query = query.replace("{{type}}", carType);
             ArrayList<Car> searchingCar = Car.searchCarList(query);
+            ArrayList<Car> searchingCarWithDate = new ArrayList<>();
 
-            if (city == null && carType == null && Helper.isFieldEmpty(fld_start_date) && Helper.isFieldEmpty(fld_end_date)){
-                loadCarModel();
-            }
-            else if (Helper.isFieldEmpty(fld_start_date) && Helper.isFieldEmpty(fld_end_date)){
+            if (Helper.isFieldEmpty(fld_start_date) && Helper.isFieldEmpty(fld_end_date)){
                 if (searchingCar.size() == 0){
                     Helper.showMsg("Aradığınız kriterlere uygun araç bulunamadı");
+                    DefaultTableModel clearModel = (DefaultTableModel) tbl_car_list.getModel();
+                    clearModel.setRowCount(0);
                 }
                 else {
                     loadCarModel(searchingCar);
                 }
             }
-            else {
-////////////BURDAM DEVAM EDİLECEK SEARCH METOD
+            else if (Helper.isFieldEmpty(fld_start_date) || Helper.isFieldEmpty(fld_end_date)){
+                Helper.showMsg("Tarih bilgisi eksik");
             }
+            else {
+                for (Car c : searchingCar){
+                    String season_start = c.getSeason_start();
+                    String season_end = c.getSeason_end();
+                    Date season_start_date = null;
+                    Date season_end_date = null;
+                    try {
+                        season_start_date = formatter.parse(season_start);
+                        season_end_date = formatter.parse(season_end);
+                    } catch (ParseException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (season_start_date.before(check_in_date) && season_end_date.after(check_out_date)){
+                        searchingCarWithDate.add(c);
+                    }
+                }
+                if (searchingCarWithDate.size() == 0){
+                    Helper.showMsg("Aradığınız kriterlere uygun araç bulunamadı");
+                    DefaultTableModel clearModel = (DefaultTableModel) tbl_car_list.getModel();
+                    clearModel.setRowCount(0);
+                }
+                else {
+                    loadCarModel(searchingCarWithDate);
+                }
+            }
+        });
 
+//rezervasyon butonu
+        btn_reservation.addActionListener(e -> {
+            if (Helper.isFieldEmpty(fld_car_id) || Helper.isFieldEmpty(fld_start_date) || Helper.isFieldEmpty(fld_end_date)){
+                Helper.showMsg("Araç seçimi ve/veya tarih bilgisi eksik");
+            }
+            else {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                check_in = fld_start_date.getText().trim();
+                check_out = fld_end_date.getText().trim();
+                Date check_in_date = null;
+                Date check_out_date = null;
+                try {
+                    check_in_date = formatter.parse(check_in);
+                    check_out_date = formatter.parse(check_out);
+                } catch (ParseException ex) {
 
-
-
-
+                }
+                Car c = Car.getFetch(select_car_id);
+                String season_start = c.getSeason_start();
+                String season_end = c.getSeason_end();
+                Date season_start_date = null;
+                Date season_end_date = null;
+                try {
+                    season_start_date = formatter.parse(season_start);
+                    season_end_date = formatter.parse(season_end);
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+                if (season_start_date.before(check_in_date) && season_end_date.after(check_out_date)){
+                    long diff = check_out_date.getTime() - check_in_date.getTime();
+                    long seconds = diff / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    long number_of_days = hours / 24;
+                    ReservationGUI resGUI = new ReservationGUI (c, number_of_days, check_in,  check_out);
+                }
+                else {
+                    Helper.showMsg("Seçili araç girilen tarihlerde uygun değil. Araç Filtrelemeden uygun araçları bulabilirsiniz");
+                }
+            }
         });
     }
 

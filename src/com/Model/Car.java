@@ -40,35 +40,6 @@ public class Car {
 
     }
 
-// girilen anahtar kelimeye göre search metodu
-    public static ArrayList<Car> searchCarList(String query){
-        ArrayList<Car> carList = new ArrayList<>();
-        Car obj;
-        try {
-            Statement st = DBConnector.getInstance().createStatement();
-            ResultSet rs = st.executeQuery(query);
-            while (rs.next()){
-                obj = new Car();
-                obj.setId(rs.getInt("id"));
-                obj.setBrand(rs.getString("brand"));
-                obj.setModel(rs.getString("model"));
-                obj.setType(rs.getString("type"));
-                obj.setSeason_start(rs.getString("season_start"));
-                obj.setSeason_end(rs.getString("season_end"));
-                obj.setPrice(rs.getInt("price"));
-                obj.setTransmission(rs.getString("transmission"));
-                obj.setFuel(rs.getString("fuel"));
-                obj.setCompany_id(rs.getInt("company_id"));
-                obj.setCity(rs.getString("city"));
-                carList.add(obj);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return carList;
-    }
-
-
     public int getId() {
         return id;
     }
@@ -208,6 +179,52 @@ public class Car {
             System.out.println(e.getMessage());
         }
         return true;
+    }
+
+    // girilen anahtar kelimeye göre search metodu
+    public static ArrayList<Car> searchCarList(String query){
+        ArrayList<Car> carList = new ArrayList<>();
+        Car obj;
+        try {
+            Statement st = DBConnector.getInstance().createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()){
+                obj = new Car();
+                obj.setId(rs.getInt("id"));
+                obj.setBrand(rs.getString("brand"));
+                obj.setModel(rs.getString("model"));
+                obj.setType(rs.getString("type"));
+                obj.setSeason_start(rs.getString("season_start"));
+                obj.setSeason_end(rs.getString("season_end"));
+                obj.setPrice(rs.getInt("price"));
+                obj.setTransmission(rs.getString("transmission"));
+                obj.setFuel(rs.getString("fuel"));
+                obj.setCompany_id(rs.getInt("company_id"));
+                obj.setCity(rs.getString("city"));
+                carList.add(obj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return carList;
+    }
+
+    public static Car getFetch(int id) {
+        Car obj = null;
+        String query = "SELECT * FROM car WHERE id = ?";
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()){
+                obj = new Car(rs.getInt("id"), rs.getString("brand"), rs.getString("model"), rs.getString("type"), rs.getString("season_start"),
+                        rs.getString("season_end"), rs.getInt("price"), rs.getString("transmission"),
+                        rs.getString("fuel"), rs.getInt("company_id"), rs.getString("city"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
     }
 
 }
