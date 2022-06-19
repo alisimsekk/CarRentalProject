@@ -27,6 +27,7 @@ public class SelectedAddition {
 
     }
 
+
     public int getId() {
         return id;
     }
@@ -91,7 +92,7 @@ public class SelectedAddition {
     }
 
     public static boolean add(String explanation, int price, int car_id, int customer_id) {
-        SelectedAddition obj = SelectedAddition.getFetchByExplanation(explanation);
+        SelectedAddition obj = SelectedAddition.getFetchByExplanationAndCustomerID(explanation, customer_id);
 
         if (obj != null) {
             Helper.showMsg("Ek özellik zaten seçili");
@@ -116,12 +117,25 @@ public class SelectedAddition {
         }
     }
 
-    private static SelectedAddition getFetchByExplanation(String explanation) {
+    public static boolean remove(int id) {
+        String query = "DELETE FROM selected_addition WHERE id = ?";
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1,id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    private static SelectedAddition getFetchByExplanationAndCustomerID(String explanation, int customer_id) {
         SelectedAddition obj = null;
-        String query = "SELECT * FROM selected_addition  WHERE explanation = ?";
+        String query = "SELECT * FROM selected_addition  WHERE explanation = ? AND customer_id = ?";
         try {
             PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
             pr.setString(1, explanation);
+            pr.setInt(2, customer_id);
             ResultSet rs = pr.executeQuery();
             while (rs.next()){
                 obj = new SelectedAddition();
@@ -136,4 +150,26 @@ public class SelectedAddition {
         }
         return obj;
     }
+
+    public static SelectedAddition getFetchByExplanation(String selected_addition_explanation) {
+        SelectedAddition obj = null;
+        String query = "SELECT * FROM selected_addition  WHERE explanation = ?";
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setString(1, selected_addition_explanation);
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()){
+                obj = new SelectedAddition();
+                obj.setId(rs.getInt("id"));
+                obj.setExplanation(rs.getString("explanation"));
+                obj.setPrice(rs.getInt("price"));
+                obj.setCar_id(rs.getInt("car_id"));
+                obj.setCustomer_id(rs.getInt("customer_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
 }

@@ -9,18 +9,18 @@ import java.sql.SQLException;
 public class User {
     private int id;
     private String name;
-    private String uname;
     private String pass;
     private String email;
+    private String phone;
     private String type;
     private String city;
 
-    public User(int id, String name, String uname, String pass, String email, String type, String city) {
+    public User(int id, String name, String pass, String email, String phone, String type, String city) {
         this.id = id;
         this.name = name;
-        this.uname = uname;
         this.pass = pass;
         this.email = email;
+        this.phone = phone;
         this.type = type;
         this.city = city;
     }
@@ -45,14 +45,6 @@ public class User {
         this.name = name;
     }
 
-    public String getUname() {
-        return uname;
-    }
-
-    public void setUname(String uname) {
-        this.uname = uname;
-    }
-
     public String getPass() {
         return pass;
     }
@@ -67,6 +59,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getType() {
@@ -107,9 +107,9 @@ public class User {
                 }
                 obj.setId(rs.getInt("id"));
                 obj.setName(rs.getString("name"));
-                obj.setUname(rs.getString("uname"));
                 obj.setPass(rs.getString("pass"));
                 obj.setEmail(rs.getString("email"));
+                obj.setPhone(rs.getString("phone"));
                 obj.setType(rs.getString("type"));
                 obj.setCity(rs.getString("city"));
             }

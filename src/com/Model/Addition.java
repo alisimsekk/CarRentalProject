@@ -79,7 +79,7 @@ public class Addition {
         return additionList;
     }
 
-    public static Addition getListByID(int id) {
+    public static Addition getFetchByID(int id) {
         String query = "SELECT * FROM addition  WHERE id = ?";
         Addition obj = null;
         try {

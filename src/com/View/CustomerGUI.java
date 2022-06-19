@@ -113,6 +113,7 @@ public class CustomerGUI extends JFrame {
 
  //araç filtreleme butonu
         btn_car_search.addActionListener(e -> {
+
             String city = cmb_city.getSelectedItem().toString();
             String carType = cmb_car_type.getSelectedItem().toString();
 
@@ -177,6 +178,8 @@ public class CustomerGUI extends JFrame {
                     loadCarModel(searchingCarWithDate);
                 }
             }
+            DefaultTableModel clearAdditionModel = (DefaultTableModel) tbl_car_addition.getModel();
+            clearAdditionModel.setRowCount(0);
         });
 
 //rezervasyon butonu
@@ -207,16 +210,21 @@ public class CustomerGUI extends JFrame {
                 } catch (ParseException ex) {
                     ex.printStackTrace();
                 }
-                if (season_start_date.before(check_in_date) && season_end_date.after(check_out_date)){
-                    long diff = check_out_date.getTime() - check_in_date.getTime();
-                    long seconds = diff / 1000;
-                    long minutes = seconds / 60;
-                    long hours = minutes / 60;
-                    long number_of_days = hours / 24;
-                    ReservationGUI resGUI = new ReservationGUI (customer, c, number_of_days, check_in,  check_out);
+                if (check_in_date.after(check_out_date)){
+                    Helper.showMsg("Araç alım tarihi, teslim tarihinden önce olamaz");
                 }
-                else {
-                    Helper.showMsg("Seçili araç girilen tarihlerde uygun değil. Araç Filtrelemeden uygun araçları bulabilirsiniz");
+                else{
+                    if (season_start_date.before(check_in_date) && season_end_date.after(check_out_date)){
+                        long diff = check_out_date.getTime() - check_in_date.getTime();
+                        long seconds = diff / 1000;
+                        long minutes = seconds / 60;
+                        long hours = minutes / 60;
+                        long number_of_days = hours / 24;
+                        ReservationGUI resGUI = new ReservationGUI (customer, c, number_of_days, check_in,  check_out);
+                    }
+                    else {
+                        Helper.showMsg("Seçili araç girilen tarihlerde uygun değil. Araç Filtrelemeden uygun araçları bulabilirsiniz");
+                    }
                 }
             }
         });
