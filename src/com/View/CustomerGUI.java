@@ -24,8 +24,6 @@ public class CustomerGUI extends JFrame {
     private JButton btn_car_search;
     private JScrollPane scrl_car_list;
     private JTable tbl_car_list;
-    private JPanel pnl_car_right;
-    private JPanel pnl_car_left;
     private JScrollPane scrl_car_left;
     private JTable tbl_car_addition;
     private JButton btn_reservation;
@@ -34,6 +32,14 @@ public class CustomerGUI extends JFrame {
     private JComboBox cmb_car_type;
     private JTextField fld_start_date;
     private JTextField fld_end_date;
+    private JPanel pnl_reserved_car;
+    private JScrollPane scrl_reserved_car;
+    private JTable tbl_reserved_car;
+    private JPanel pnl_reservation;
+    private JPanel pnl_reserved_car_top;
+    private JTextField fld_reserved_car_id;
+    private JButton btn_reserved_car_cancel;
+    private JTable tbl_reserved_addition;
 
     DefaultTableModel mdl_car_list;
     private Object[] row_car_list;
@@ -44,6 +50,14 @@ public class CustomerGUI extends JFrame {
     private int select_car_id;
     private String check_in;
     private String check_out;
+
+    DefaultTableModel mdl_reserved_car_list;
+    private Object[] row_reserved_car_list;
+
+    DefaultTableModel mdl_reserved_addition_list;
+    private Object[] row_reserved_addition_list;
+
+    private int reserved_car_id;
 
     private Customer customer;
 
@@ -95,6 +109,34 @@ public class CustomerGUI extends JFrame {
         tbl_car_addition.getColumnModel().getColumn(0).setMaxWidth(75);
 //ek hizmet tablosu kodları bitişi
 
+//Rezervasyon yapılmış araç tablosu kodları başlangıcı
+        mdl_reserved_car_list = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0)
+                    return false;
+                return super.isCellEditable(row, column);
+            }
+        };
+        Object[] col_reserved_car_list = {"id", "Firma", "Şehir", "Marka", "Model", "Tip", "Vites", "Yakıt", "Kiralama Tarihi", "Teslim Tarihi", "Toptam Tutar (TL)"};
+        mdl_reserved_car_list.setColumnIdentifiers(col_reserved_car_list);
+        row_reserved_car_list = new Object[col_reserved_car_list.length];
+        loadReservedCarModel();
+        tbl_reserved_car.setModel(mdl_reserved_car_list);
+        tbl_reserved_car.getTableHeader().setReorderingAllowed(false);
+        tbl_reserved_car.getColumnModel().getColumn(0).setMaxWidth(75);
+//Rezervasyon yapılmış araç tablosu kodları bitişi
+
+//Rezervasyon iptali için araç id sini alma
+        tbl_reserved_car.getSelectionModel().addListSelectionListener(e -> {
+            try{
+                reserved_car_id = Integer.parseInt(tbl_reserved_car.getValueAt(tbl_reserved_car.getSelectedRow(),0).toString());
+            }
+            catch (Exception ex){
+
+            }
+            fld_reserved_car_id.setText(Integer.toString(reserved_car_id));
+        });
 
 //Ek hizmetleri listelemek için araç id sini alma
         tbl_car_list.getSelectionModel().addListSelectionListener(e -> {
@@ -110,6 +152,7 @@ public class CustomerGUI extends JFrame {
 
         loadCityCombo();
         loadCarTypeCombo();
+
 
  //araç filtreleme butonu
         btn_car_search.addActionListener(e -> {
@@ -228,9 +271,51 @@ public class CustomerGUI extends JFrame {
                 }
             }
         });
+        btn_logout.addActionListener(e -> {
+            dispose();
+            LoginGUI log = new LoginGUI();
+        });
+
+//rezervasyon iptal butonu kodları
+        btn_reserved_car_cancel.addActionListener(e -> {
+            if (Helper.isFieldEmpty(fld_reserved_car_id)){
+                Helper.showMsg("fill");
+            }
+            else {
+                if (ReservedCar.remove(reserved_car_id)){
+                    Helper.showMsg("done");
+                    loadReservedCarModel();
+                }
+                else {
+                    Helper.showMsg("Kiralama gününe 1 günden az kaldığı için iptal gerçekleştirilemedi.");
+                }
+            }
+            fld_reserved_car_id.setText(null);
+        });
     }
 
-    private void loadCarModel() {
+    private void loadReservedCarModel() {   //rezervasyon yapılmış araçları tabloya aktaran metod
+        DefaultTableModel clearModel = (DefaultTableModel) tbl_reserved_car.getModel();
+        clearModel.setRowCount(0);
+        int i;
+        for (ReservedCar obj : ReservedCar.getListByCustomerID(customer.getId())){
+            i = 0;
+            row_reserved_car_list[i++] = obj.getId();
+            row_reserved_car_list[i++] = Company.getFetchByID(Car.getFetch(obj.getCar_id()).getCompany_id()).getName();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getCity();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getBrand();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getModel();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getType();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getFuel();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getTransmission();
+            row_reserved_car_list[i++] = obj.getCheck_in_date();
+            row_reserved_car_list[i++] = obj.getCheck_out_date();
+            row_reserved_car_list[i++] = obj.getTotal_price();
+            mdl_reserved_car_list.addRow(row_reserved_car_list);
+        }
+    }
+
+    private void loadCarModel() {       //sisteme ekli araçları tabloya aktaran metod
         DefaultTableModel clearModel = (DefaultTableModel) tbl_car_list.getModel();
         clearModel.setRowCount(0);
         int i;
@@ -249,7 +334,7 @@ public class CustomerGUI extends JFrame {
         }
     }
 
-    private void loadCarModel(ArrayList<Car> carList) {
+    private void loadCarModel(ArrayList<Car> carList) {     //filtrelenmiş araçları tabloya aktaran metod
         DefaultTableModel clearModel = (DefaultTableModel) tbl_car_list.getModel();
         clearModel.setRowCount(0);
         int i;
@@ -272,8 +357,6 @@ public class CustomerGUI extends JFrame {
             }
         }
     }
-
-
 
     private void loadAdditionModel(int car_id) {
         DefaultTableModel clearModel = (DefaultTableModel) tbl_car_addition.getModel();

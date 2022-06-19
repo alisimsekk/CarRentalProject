@@ -5,11 +5,10 @@ import com.Helper.Helper;
 import com.Model.Addition;
 import com.Model.Car;
 import com.Model.Company;
+import com.Model.ReservedCar;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -31,6 +30,9 @@ public class CompanyGUI extends JFrame{
     private JPanel pnl_car_right;
     private JTextArea txtArea_axplanation;
     private JTextField fld_addition_price;
+    private JPanel pnl_reservedcar;
+    private JScrollPane scrl_reserved_car;
+    private JTable tbl_reserved_car;
 
     DefaultTableModel mdl_car_list;
     private Object[] row_car_list;
@@ -40,7 +42,8 @@ public class CompanyGUI extends JFrame{
 
     private int select_car_id;
 
-
+    DefaultTableModel mdl_reserved_car_list;
+    private Object[] row_reserved_car_list;
 
     private Company company;
 
@@ -91,6 +94,25 @@ public class CompanyGUI extends JFrame{
         tbl_car_addition.getTableHeader().setReorderingAllowed(false);
         tbl_car_addition.getColumnModel().getColumn(0).setMaxWidth(75);
 //ek hizmet tablosu kodları bitişi
+
+
+//Rezervasyon yapılmış araç tablosu kodları başlangıcı
+        mdl_reserved_car_list = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0)
+                    return false;
+                return super.isCellEditable(row, column);
+            }
+        };
+        Object[] col_reserved_car_list = {"id", "Firma", "Şehir", "Marka", "Model", "Tip", "Vites", "Yakıt", "Kiralama Tarihi", "Teslim Tarihi", "Toplam Tutar (TL)"};
+        mdl_reserved_car_list.setColumnIdentifiers(col_reserved_car_list);
+        row_reserved_car_list = new Object[col_reserved_car_list.length];
+        loadReservedCarModel();
+        tbl_reserved_car.setModel(mdl_reserved_car_list);
+        tbl_reserved_car.getTableHeader().setReorderingAllowed(false);
+        tbl_reserved_car.getColumnModel().getColumn(0).setMaxWidth(75);
+//Rezervasyon yapılmış araç tablosu kodları bitişi
 
 
 //Ek hizmetleri listelemek için araç id sini alma
@@ -146,6 +168,7 @@ public class CompanyGUI extends JFrame{
 
         btn_logout.addActionListener(e -> {
             dispose();
+            LoginGUI log = new LoginGUI();
         });
     }
 
@@ -188,6 +211,26 @@ public class CompanyGUI extends JFrame{
         }
     }
 
+    private void loadReservedCarModel() {   //rezervasyon yapılmış araçları tabloya aktaran metod
+        DefaultTableModel clearModel = (DefaultTableModel) tbl_reserved_car.getModel();
+        clearModel.setRowCount(0);
+        int i;
+        for (ReservedCar obj : ReservedCar.getListByCompanyID(company.getId())){
+            i = 0;
+            row_reserved_car_list[i++] = obj.getId();
+            row_reserved_car_list[i++] = Company.getFetchByID(Car.getFetch(obj.getCar_id()).getCompany_id()).getName();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getCity();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getBrand();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getModel();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getType();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getFuel();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getTransmission();
+            row_reserved_car_list[i++] = obj.getCheck_in_date();
+            row_reserved_car_list[i++] = obj.getCheck_out_date();
+            row_reserved_car_list[i++] = obj.getTotal_price();
+            mdl_reserved_car_list.addRow(row_reserved_car_list);
+        }
+    }
 
 
 

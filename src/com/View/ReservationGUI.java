@@ -150,18 +150,16 @@ public class ReservationGUI extends JFrame {
             int customer_id = customer.getId();
             String check_in_date = check_in;
             String check_out_date = check_out;
+            int price = Integer.parseInt(fld_price.getText());
             int car_id = car.getId();
             int company_id = car.getCompany_id();
 
-            if (ReservedCar.add(customer_id, check_in_date, check_out_date, car_id, company_id )){
+            if (ReservedCar.add(customer_id, check_in_date, check_out_date, price, car_id, company_id )){
                 Helper.showMsg("done");
             }
             else {
                 Helper.showMsg("error");
             }
-
-
-
         });
 
 
