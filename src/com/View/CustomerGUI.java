@@ -7,8 +7,6 @@ import com.Model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -155,8 +153,14 @@ public class CustomerGUI extends JFrame {
 
 
  //araç filtreleme butonu
-        btn_car_search.addActionListener(e -> {
 
+        /*int comparison=d.compareTo(d1);
+        It returns the value 0 if d1 is equal to d.  return 0
+        It returns a value less than 0 if this d is before the d1.   return -1
+        It returns a value greater than 0 if d is after d1. return 1
+         */
+        btn_car_search.addActionListener(e -> {
+            Car avaibleCar = null;
             String city = cmb_city.getSelectedItem().toString();
             String carType = cmb_car_type.getSelectedItem().toString();
 
@@ -208,8 +212,54 @@ public class CustomerGUI extends JFrame {
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
-                    if (season_start_date.before(check_in_date) && season_end_date.after(check_out_date)){
-                        searchingCarWithDate.add(c);
+                    if (season_start_date.compareTo(check_in_date) != 1 && season_end_date.compareTo(check_out_date) != -1){
+                        ArrayList<ReservedCar> reservedCarList = new ArrayList<>();
+                        reservedCarList = ReservedCar.getListByCarID(c.getId());
+                        if (reservedCarList.size() != 0){
+                            for (ReservedCar reservedCar : reservedCarList){
+                                    String reservedCar_check_in = reservedCar.getCheck_in();
+                                    String reservedCar_check_out = reservedCar.getCheck_out();
+                                    Date reservedCar_check_in_date = null;
+                                    Date reservedCar_check_out_date = null;
+                                    try {
+                                        reservedCar_check_in_date = formatter.parse(reservedCar_check_in);
+                                        reservedCar_check_out_date = formatter.parse(reservedCar_check_out);
+                                    } catch (ParseException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                    if ( check_in_date.compareTo(reservedCar_check_in_date) != 1 && reservedCar_check_in_date.compareTo(check_out_date) != 1
+                                            && check_out_date.compareTo(reservedCar_check_out_date) != 1){
+                                        //araç uygun değil, filtrelemeye alma.
+                                        avaibleCar = null;
+                                        break;
+                                    }
+                                    else if (reservedCar_check_in_date.compareTo(check_in_date) != 1 && check_out_date.compareTo(reservedCar_check_out_date) != 1){
+                                        //araç uygun değil, filtrelemeye alma.
+                                        avaibleCar = null;
+                                        break;
+                                    }
+                                    else if (reservedCar_check_in_date.compareTo(check_in_date) != 1 && check_in_date.compareTo(reservedCar_check_out_date) != 1 && reservedCar_check_out_date.compareTo(check_out_date) != 1){
+                                        //araç uygun değil, filtrelemeye alma.
+                                        avaibleCar = null;
+                                        break;
+                                    }
+                                    else if (check_in_date.compareTo(reservedCar_check_in_date) != 1 && reservedCar_check_out_date.compareTo(check_out_date) != 1){
+                                        //araç uygun değil, filtrelemeye alma.
+                                        avaibleCar = null;
+                                        break;
+                                    }
+                                    else {
+                                        System.out.println(reservedCar.getId());
+                                        avaibleCar = c;
+                                    }
+                            }
+                            if ( avaibleCar != null){
+                                searchingCarWithDate.add(avaibleCar);
+                            }
+                        }
+                        else{
+                            searchingCarWithDate.add(c);
+                        }
                     }
                 }
                 if (searchingCarWithDate.size() == 0){
@@ -219,6 +269,7 @@ public class CustomerGUI extends JFrame {
                 }
                 else {
                     loadCarModel(searchingCarWithDate);
+
                 }
             }
             DefaultTableModel clearAdditionModel = (DefaultTableModel) tbl_car_addition.getModel();
@@ -308,8 +359,8 @@ public class CustomerGUI extends JFrame {
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getType();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getFuel();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getTransmission();
-            row_reserved_car_list[i++] = obj.getCheck_in_date();
-            row_reserved_car_list[i++] = obj.getCheck_out_date();
+            row_reserved_car_list[i++] = obj.getCheck_in();
+            row_reserved_car_list[i++] = obj.getCheck_out();
             row_reserved_car_list[i++] = obj.getTotal_price();
             mdl_reserved_car_list.addRow(row_reserved_car_list);
         }

@@ -225,8 +225,8 @@ public class CompanyGUI extends JFrame{
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getType();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getFuel();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getTransmission();
-            row_reserved_car_list[i++] = obj.getCheck_in_date();
-            row_reserved_car_list[i++] = obj.getCheck_out_date();
+            row_reserved_car_list[i++] = obj.getCheck_in();
+            row_reserved_car_list[i++] = obj.getCheck_out();
             row_reserved_car_list[i++] = obj.getTotal_price();
             mdl_reserved_car_list.addRow(row_reserved_car_list);
         }

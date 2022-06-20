@@ -11,29 +11,25 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.util.Date;
-
 
 
 public class ReservedCar {
     private int id;
     private int customer_id;
-    private String check_in_date;
-    private String check_out_date;
+    private String check_in;
+    private String check_out;
     private int total_price;
     private int car_id;
     private int company_id;
 
 
-    public ReservedCar(int id, int customer_id, String check_in_date, String check_out_date, int total_price, int car_id, int company_id) {
+    public ReservedCar(int id, int customer_id, String check_in, String check_out, int total_price, int car_id, int company_id) {
         this.id = id;
         this.customer_id = customer_id;
-        this.check_in_date = check_in_date;
-        this.check_out_date = check_out_date;
+        this.check_in = check_in;
+        this.check_out = check_out;
         this.total_price = total_price;
         this.car_id = car_id;
         this.company_id = company_id;
@@ -59,20 +55,20 @@ public class ReservedCar {
         this.customer_id = customer_id;
     }
 
-    public String getCheck_in_date() {
-        return check_in_date;
+    public String getCheck_in() {
+        return check_in;
     }
 
-    public void setCheck_in_date(String check_in_date) {
-        this.check_in_date = check_in_date;
+    public void setCheck_in(String check_in) {
+        this.check_in = check_in;
     }
 
-    public String getCheck_out_date() {
-        return check_out_date;
+    public String getCheck_out() {
+        return check_out;
     }
 
-    public void setCheck_out_date(String check_out_date) {
-        this.check_out_date = check_out_date;
+    public void setCheck_out(String check_out) {
+        this.check_out = check_out;
     }
 
     public int getTotal_price() {
@@ -111,8 +107,8 @@ public class ReservedCar {
                 obj = new ReservedCar();
                 obj.setId(rs.getInt("id"));
                 obj.setCustomer_id(rs.getInt("customer_id"));
-                obj.setCheck_in_date(rs.getString("check_in_date"));
-                obj.setCheck_out_date(rs.getString("check_out_date"));
+                obj.setCheck_in(rs.getString("check_in"));
+                obj.setCheck_out(rs.getString("check_out"));
                 obj.setTotal_price(rs.getInt("total_price"));
                 obj.setCar_id(rs.getInt("car_id"));
                 obj.setCompany_id(rs.getInt("company_id"));
@@ -136,8 +132,33 @@ public class ReservedCar {
                 obj = new ReservedCar();
                 obj.setId(rs.getInt("id"));
                 obj.setCustomer_id(rs.getInt("customer_id"));
-                obj.setCheck_in_date(rs.getString("check_in_date"));
-                obj.setCheck_out_date(rs.getString("check_out_date"));
+                obj.setCheck_in(rs.getString("check_in"));
+                obj.setCheck_out(rs.getString("check_out"));
+                obj.setTotal_price(rs.getInt("total_price"));
+                obj.setCar_id(rs.getInt("car_id"));
+                obj.setCompany_id(rs.getInt("company_id"));
+                reservedCarList.add(obj);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservedCarList;
+    }
+
+    public static ArrayList<ReservedCar> getListByCarID(int car_id) {
+        ArrayList<ReservedCar> reservedCarList = new ArrayList<>();
+        String query = "SELECT * FROM reserved_car WHERE car_id = ?";
+        ReservedCar obj;
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setInt(1, car_id);
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()){
+                obj = new ReservedCar();
+                obj.setId(rs.getInt("id"));
+                obj.setCustomer_id(rs.getInt("customer_id"));
+                obj.setCheck_in(rs.getString("check_in"));
+                obj.setCheck_out(rs.getString("check_out"));
                 obj.setTotal_price(rs.getInt("total_price"));
                 obj.setCar_id(rs.getInt("car_id"));
                 obj.setCompany_id(rs.getInt("company_id"));
@@ -160,8 +181,8 @@ public class ReservedCar {
                 obj = new ReservedCar();
                 obj.setId(rs.getInt("id"));
                 obj.setCustomer_id(rs.getInt("customer_id"));
-                obj.setCheck_in_date(rs.getString("check_in_date"));
-                obj.setCheck_out_date(rs.getString("check_out_date"));
+                obj.setCheck_in(rs.getString("check_in"));
+                obj.setCheck_out(rs.getString("check_out"));
                 obj.setTotal_price(rs.getInt("total_price"));
                 obj.setCar_id(rs.getInt("car_id"));
                 obj.setCompany_id(rs.getInt("company_id"));
@@ -172,13 +193,13 @@ public class ReservedCar {
         return obj;
     }
 
-    public static boolean add(int customer_id, String check_in_date, String check_out_date, int total_price, int car_id, int company_id) {
-        String query = "INSERT INTO reserved_car (customer_id, check_in_date, check_out_date, total_price, car_id, company_id ) VALUES (?,?,?,?,?,?)";
+    public static boolean add(int customer_id, String check_in, String check_out, int total_price, int car_id, int company_id) {
+        String query = "INSERT INTO reserved_car (customer_id, check_in, check_out, total_price, car_id, company_id ) VALUES (?,?,?,?,?,?)";
         try {
             PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
             pr.setInt(1,customer_id);
-            pr.setString(2,check_in_date);
-            pr.setString(3,check_out_date);
+            pr.setString(2,check_in);
+            pr.setString(3,check_out);
             pr.setInt(4,total_price);
             pr.setInt(5,car_id);
             pr.setInt(6,company_id);
@@ -202,7 +223,7 @@ public class ReservedCar {
         //local date + atStartOfDay() + default time zone + toInstant() = Date
         Date today_date = Date.from(today.atStartOfDay(defaultZoneId).toInstant());
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String check_in =  reservedCar.getCheck_in_date();
+        String check_in =  reservedCar.getCheck_in();
         Date check_in_date = null;
         try {
             check_in_date = formatter.parse(check_in);
