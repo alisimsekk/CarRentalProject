@@ -7,6 +7,8 @@ import com.Model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ public class CustomerGUI extends JFrame {
     private Object[] row_reserved_addition_list;
 
     private int reserved_car_id;
+    ReservedCar reservedCar;
 
     private Customer customer;
 
@@ -129,6 +132,7 @@ public class CustomerGUI extends JFrame {
         tbl_reserved_car.getSelectionModel().addListSelectionListener(e -> {
             try{
                 reserved_car_id = Integer.parseInt(tbl_reserved_car.getValueAt(tbl_reserved_car.getSelectedRow(),0).toString());
+                reservedCar = ReservedCar.getFetch(reserved_car_id);
             }
             catch (Exception ex){
 
@@ -315,6 +319,12 @@ public class CustomerGUI extends JFrame {
                         long hours = minutes / 60;
                         long number_of_days = hours / 24;
                         ReservationGUI resGUI = new ReservationGUI (customer, c, number_of_days, check_in,  check_out);
+                        resGUI.addWindowListener(new WindowAdapter() {
+                            @Override
+                            public void windowClosed(WindowEvent e) {
+                                loadReservedCarModel();
+                            }
+                        });
                     }
                     else {
                         Helper.showMsg("Seçili araç girilen tarihlerde uygun değil. Araç Filtrelemeden uygun araçları bulabilirsiniz");
@@ -322,10 +332,13 @@ public class CustomerGUI extends JFrame {
                 }
             }
         });
+
         btn_logout.addActionListener(e -> {
             dispose();
             LoginGUI log = new LoginGUI();
         });
+
+
 
 //rezervasyon iptal butonu kodları
         btn_reserved_car_cancel.addActionListener(e -> {
@@ -334,14 +347,17 @@ public class CustomerGUI extends JFrame {
             }
             else {
                 if (ReservedCar.remove(reserved_car_id)){
-                    Helper.showMsg("done");
-                    loadReservedCarModel();
+////////////////////////////////////
+                    if (SelectedAddition.remove(customer.getId(), reservedCar.getCheck_in(), reservedCar.getCar_id())){
+                        Helper.showMsg("done");
+                        loadReservedCarModel();
+                        fld_reserved_car_id.setText(null);
+                    }
                 }
                 else {
                     Helper.showMsg("Kiralama gününe 1 günden az kaldığı için iptal gerçekleştirilemedi.");
                 }
             }
-            fld_reserved_car_id.setText(null);
         });
     }
 
