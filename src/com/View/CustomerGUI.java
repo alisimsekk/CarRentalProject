@@ -253,7 +253,6 @@ public class CustomerGUI extends JFrame {
                                         break;
                                     }
                                     else {
-                                        System.out.println(reservedCar.getId());
                                         avaibleCar = c;
                                     }
                             }
@@ -323,6 +322,10 @@ public class CustomerGUI extends JFrame {
                             @Override
                             public void windowClosed(WindowEvent e) {
                                 loadReservedCarModel();
+                                loadCarModel();
+                                fld_car_id.setText(null);
+                                fld_start_date.setText(null);
+                                fld_end_date.setText(null);
                             }
                         });
                     }
@@ -347,7 +350,6 @@ public class CustomerGUI extends JFrame {
             }
             else {
                 if (ReservedCar.remove(reserved_car_id)){
-////////////////////////////////////
                     if (SelectedAddition.remove(customer.getId(), reservedCar.getCheck_in(), reservedCar.getCar_id())){
                         Helper.showMsg("done");
                         loadReservedCarModel();

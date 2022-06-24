@@ -1,6 +1,7 @@
 package com.Model;
 
 import com.Helper.DBConnector;
+import com.Helper.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,6 +29,7 @@ public class User {
     public User() {
 
     }
+
 
     public int getId() {
         return id;
@@ -85,7 +87,7 @@ public class User {
         this.city = city;
     }
 
-    //login ekranında email ve pass i db de sorgular
+//login ekranında email ve pass i db de sorgular
     public static User getFetch(String email, String pass){
         User obj = null;
         String query = "SELECT * FROM user WHERE email = ? AND pass = ?";
@@ -119,6 +121,31 @@ public class User {
         return obj;
     }
 
+    public static boolean add(String name, String pass, String email, String phone, String type, String city) {
+        String query = "INSERT INTO user (name, pass, email,phone, type, city) VALUES (?,?,?,?,?,?)";
+        User findUser = getFetch(email, pass);
+        if (findUser != null){
+            Helper.showMsg("Bu kullanıcı daha önceden eklenmiştir. Lütfen farklı bir mail giriniz.");
+            return false;
+        }
+        try {
+            PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
+            pr.setString(1,name);
+            pr.setString(2,pass);
+            pr.setString(3,email);
+            pr.setString(4,phone);
+            pr.setString(5,type);
+            pr.setString(6,city);
+            int response = pr.executeUpdate();
+            if (response == -1){
+                Helper.showMsg("error");
+            }
+            return response != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
+    }
 
 }
 

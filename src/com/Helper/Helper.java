@@ -70,16 +70,6 @@ public class Helper {
         return area.getText().trim().isEmpty();
     }
 
-// user search için dinamik query oluşturma
-    public static String searchQuery (String name, String uname, String type) {
-        String query = "SELECT * FROM user WHERE name LIKE '%{{name}}%' AND uname LIKE '%{{uname}}%' AND type LIKE '%{{type}}%'";
-        query = query.replace("{{name}}", name);
-        query = query.replace("{{uname}}", uname);
-        query = query.replace("{{type}}",type);
-
-        return query;
-    }
-
 //silme işlemlerinde emin misin ekranına ait metod
     public static boolean confirm(String str) {
         optionPaneTR();

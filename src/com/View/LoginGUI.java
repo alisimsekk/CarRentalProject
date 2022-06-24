@@ -15,6 +15,7 @@ public class LoginGUI extends JFrame {
     private JTextField fld_user_email;
     private JPasswordField fld_user_pass;
     private JButton btn_login;
+    private JButton btn_signup;
 
     public LoginGUI(){
         add(wrapper);
@@ -24,6 +25,12 @@ public class LoginGUI extends JFrame {
         setTitle(Config.PROJECT_TITLE);
         setResizable(false);
         setVisible(true);
+
+        btn_signup.addActionListener(e -> {
+            SignUpGUI signGUI = new SignUpGUI();
+        });
+
+
 
 //login ekranı giriş yap butonu metodu
         btn_login.addActionListener(e -> {
@@ -48,6 +55,7 @@ public class LoginGUI extends JFrame {
                 }
             }
         });
+
     }
 
     public static void main(String[] args){
