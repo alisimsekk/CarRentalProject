@@ -26,12 +26,6 @@ public class LoginGUI extends JFrame {
         setResizable(false);
         setVisible(true);
 
-        btn_signup.addActionListener(e -> {
-            SignUpGUI signGUI = new SignUpGUI();
-        });
-
-
-
 //login ekranı giriş yap butonu metodu
         btn_login.addActionListener(e -> {
             if (Helper.isFieldEmpty(fld_user_email) || Helper.isFieldEmpty(fld_user_pass)){
@@ -54,6 +48,11 @@ public class LoginGUI extends JFrame {
                     dispose();
                 }
             }
+        });
+
+//kayıt ol butonu kodları
+        btn_signup.addActionListener(e -> {
+            SignUpGUI signGUI = new SignUpGUI();
         });
 
     }

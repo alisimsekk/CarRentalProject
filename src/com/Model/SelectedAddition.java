@@ -87,14 +87,15 @@ public class SelectedAddition {
         this.customer_id = customer_id;
     }
 
-    public static ArrayList<SelectedAddition> getListByCarIDandCheckin(int car_id, String check_in){
+    public static ArrayList<SelectedAddition> getListByCarIDandCheckin(int car_id, String check_in, int customer_id){
         ArrayList<SelectedAddition> selectedAdditionList = new ArrayList<>();
-        String query = "SELECT * FROM selected_addition  WHERE car_id = ? AND check_in = ?";
+        String query = "SELECT * FROM selected_addition  WHERE car_id = ? AND check_in = ? AND customer_id = ?";
         SelectedAddition obj;
         try {
             PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
             pr.setInt(1, car_id);
             pr.setString(2,check_in);
+            pr.setInt(3,customer_id);
             ResultSet rs = pr.executeQuery();
             while (rs.next()){
                 obj = new SelectedAddition();
@@ -108,6 +109,7 @@ public class SelectedAddition {
                 selectedAdditionList.add(obj);
             }
         } catch (SQLException e) {
+            System.out.println("hata burdan");
             e.printStackTrace();
         }
         return selectedAdditionList;

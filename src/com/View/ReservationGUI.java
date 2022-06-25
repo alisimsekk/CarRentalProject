@@ -30,6 +30,7 @@ public class ReservationGUI extends JFrame {
     private JTextField fld_number_of_day;
     private JTextField fld_price;
     private JButton btn_reservation;
+    private JTextField fld_year;
 
     DefaultTableModel mdl_addition_list;
     private Object[] row_addition_list;
@@ -54,6 +55,7 @@ public class ReservationGUI extends JFrame {
 
         fld_rez_brand.setText(car.getBrand());
         fld_rez_model.setText(car.getModel());
+        fld_year.setText(String.valueOf(car.getYear()));
         fld_rez_type.setText(car.getType());
         fld_rez_transmission.setText(car.getTransmission());
         fld_rez_fuel.setText(car.getFuel());
@@ -62,8 +64,6 @@ public class ReservationGUI extends JFrame {
         fld_number_of_day.setText(String.valueOf(number_of_days));
         int total_price = (int) (car.getPrice() * number_of_days);
         fld_price.setText(String.valueOf(total_price));
-
-
 
 //soldaki ek hizmet tablosu kodları başlangıcı
         mdl_addition_list = new DefaultTableModel(){
@@ -96,7 +96,7 @@ public class ReservationGUI extends JFrame {
         Object[] col_selectedAddition_list = {"Açıklama", "Fiyat (TL)"};
         mdl_selectedAddition_list.setColumnIdentifiers(col_selectedAddition_list);
         row_selectedAddition_list = new Object[col_selectedAddition_list.length];
-        loadSelectedAdditionModel(car.getId(), check_in);
+        loadSelectedAdditionModel(car.getId(), check_in, customer.getId());
         tbl_addition_right.setModel(mdl_selectedAddition_list);
         tbl_addition_right.getTableHeader().setReorderingAllowed(false);
 //sağdaki ek hizmet tablosu kodları bitişi
@@ -120,8 +120,8 @@ public class ReservationGUI extends JFrame {
             if (SelectedAddition.add(explanation, price,check_in, check_out, car_id, customer.getId())){
                 Helper.showMsg("done");
             }
-            loadSelectedAdditionModel(car.getId(), check_in);
-            calculatePrice(car, (int) number_of_days, total_price);
+            loadSelectedAdditionModel(car.getId(), check_in, customer.getId());
+            calculatePrice(car, (int) number_of_days, total_price, customer);
         });
 
 //eklenen ek hizmetin bilgilerini alma kodları (sağdaki tablo)
@@ -141,8 +141,8 @@ public class ReservationGUI extends JFrame {
             if (SelectedAddition.remove(selected_addition_id)){
                 Helper.showMsg("done");
             }
-            loadSelectedAdditionModel(car.getId(), check_in);
-            calculatePrice(car, (int) number_of_days, total_price);
+            loadSelectedAdditionModel(car.getId(), check_in, customer.getId());
+            calculatePrice(car, (int) number_of_days, total_price, customer);
         });
 
 //müşterinin aracı rezerve etmesini sağlayan butona ait kodlar
@@ -161,10 +161,6 @@ public class ReservationGUI extends JFrame {
                 Helper.showMsg("error");
             }
         });
-
-
-
-
     }
 
 //araca tanımlı ek özellikleri soldaki tabloda gösteren metod
@@ -183,11 +179,11 @@ public class ReservationGUI extends JFrame {
     }
 
 //satın almak üzere seçilmiş ek hizmetleri sağdaki tabloda gösteren metod
-    private void loadSelectedAdditionModel(int car_id, String check_in) {
+    private void loadSelectedAdditionModel(int car_id, String check_in, int customer_id) {
         DefaultTableModel clearModel = (DefaultTableModel) tbl_addition_right.getModel();
         clearModel.setRowCount(0);
         int i;
-        for (SelectedAddition obj : SelectedAddition.getListByCarIDandCheckin(car_id, check_in)){
+        for (SelectedAddition obj : SelectedAddition.getListByCarIDandCheckin(car_id, check_in, customer_id)){
             i = 0;
             row_selectedAddition_list[i++] = obj.getExplanation();
             row_selectedAddition_list[i++] = obj.getPrice();
@@ -196,9 +192,9 @@ public class ReservationGUI extends JFrame {
     }
 
 //sağdaki tabloya eklenen ek hizmetleri toplam tutara ekleyen metod
-    private void calculatePrice(Car c, int number_of_days, int price){
+    private void calculatePrice(Car c, int number_of_days, int price, Customer customer){
         int total_price1= price;
-        for (SelectedAddition selAdd : SelectedAddition.getListByCarIDandCheckin(c.getId(), fld_check_in.getText())){
+        for (SelectedAddition selAdd : SelectedAddition.getListByCarIDandCheckin(c.getId(), fld_check_in.getText(), customer.getId())){
             total_price1 += selAdd.getPrice();
         }
         fld_price.setText(String.valueOf(total_price1));

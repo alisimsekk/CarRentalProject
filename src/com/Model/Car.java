@@ -13,6 +13,7 @@ public class Car {
     private int id;
     private String brand;
     private String model;
+    private int year;
     private String type;
     private String season_start;
     private String season_end;
@@ -22,10 +23,11 @@ public class Car {
     private int company_id;
     private String city;
 
-    public Car(int id, String brand, String model, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id, String city) {
+    public Car(int id, String brand, String model, int year, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id, String city) {
         this.id = id;
         this.brand = brand;
         this.model = model;
+        this.year = year;
         this.type = type;
         this.season_start = season_start;
         this.season_end = season_end;
@@ -62,6 +64,14 @@ public class Car {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public String getType() {
@@ -140,6 +150,7 @@ public class Car {
                 obj.setId(rs.getInt("id"));
                 obj.setBrand(rs.getString("brand"));
                 obj.setModel(rs.getString("model"));
+                obj.setYear(rs.getInt("year"));
                 obj.setType(rs.getString("type"));
                 obj.setSeason_start(rs.getString("season_start"));
                 obj.setSeason_end(rs.getString("season_end"));
@@ -156,20 +167,21 @@ public class Car {
         return carList;
     }
 
-    public static boolean add(String brand, String model, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id, String city) {
-        String query = "INSERT INTO car (brand, model, type, season_start, season_end, price, transmission, fuel, company_id, city) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    public static boolean add(String brand, String model, int year, String type, String season_start, String season_end, int price, String transmission, String fuel, int company_id, String city) {
+        String query = "INSERT INTO car (brand, model, year, type, season_start, season_end, price, transmission, fuel, company_id, city) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pr = DBConnector.getInstance().prepareStatement(query);
             pr.setString(1,brand);
             pr.setString(2,model);
-            pr.setString(3,type);
-            pr.setString(4,season_start);
-            pr.setString(5,season_end);
-            pr.setInt(6,price);
-            pr.setString(7,transmission);
-            pr.setString(8,fuel);
-            pr.setInt(9,company_id);
-            pr.setString(10,city);
+            pr.setInt(3,year);
+            pr.setString(4,type);
+            pr.setString(5,season_start);
+            pr.setString(6,season_end);
+            pr.setInt(7,price);
+            pr.setString(8,transmission);
+            pr.setString(9,fuel);
+            pr.setInt(10,company_id);
+            pr.setString(11,city);
             int response = pr.executeUpdate();
             if (response == -1){
                 Helper.showMsg("error");
@@ -193,6 +205,7 @@ public class Car {
                 obj.setId(rs.getInt("id"));
                 obj.setBrand(rs.getString("brand"));
                 obj.setModel(rs.getString("model"));
+                obj.setYear(rs.getInt("year"));
                 obj.setType(rs.getString("type"));
                 obj.setSeason_start(rs.getString("season_start"));
                 obj.setSeason_end(rs.getString("season_end"));
@@ -217,7 +230,7 @@ public class Car {
             pr.setInt(1, id);
             ResultSet rs = pr.executeQuery();
             if (rs.next()){
-                obj = new Car(rs.getInt("id"), rs.getString("brand"), rs.getString("model"), rs.getString("type"), rs.getString("season_start"),
+                obj = new Car(rs.getInt("id"), rs.getString("brand"), rs.getString("model"), rs.getInt("year"), rs.getString("type"), rs.getString("season_start"),
                         rs.getString("season_end"), rs.getInt("price"), rs.getString("transmission"),
                         rs.getString("fuel"), rs.getInt("company_id"), rs.getString("city"));
             }

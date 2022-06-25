@@ -39,6 +39,9 @@ public class CustomerGUI extends JFrame {
     private JPanel pnl_reserved_car_top;
     private JTextField fld_reserved_car_id;
     private JButton btn_reserved_car_cancel;
+    private JLabel jlbl_welcome;
+    private JScrollPane scrl_car_right;
+    private JTable tbl_car_season;
     private JTable tbl_reserved_addition;
 
     DefaultTableModel mdl_car_list;
@@ -57,6 +60,9 @@ public class CustomerGUI extends JFrame {
     DefaultTableModel mdl_reserved_addition_list;
     private Object[] row_reserved_addition_list;
 
+    DefaultTableModel mdl_car_season_list;
+    private Object[] row_car_season_list;
+
     private int reserved_car_id;
     ReservedCar reservedCar;
 
@@ -72,6 +78,8 @@ public class CustomerGUI extends JFrame {
         setResizable(false);
         setVisible(true);
 
+        jlbl_welcome.setText("Hoş geldin " + customer.getName());
+
 //Araç tablosu kodları başlangıcı
         mdl_car_list = new DefaultTableModel(){
             @Override
@@ -82,7 +90,7 @@ public class CustomerGUI extends JFrame {
             }
         };
 
-        Object[] col_car_list = {"id", "Marka", "Model", "Tip", "Fiyat", "Vites", "Yakıt", "Firma", "Şehir"};
+        Object[] col_car_list = {"id", "Marka", "Model", "Model Yılı", "Tip", "Fiyat", "Vites", "Yakıt", "Firma", "Şehir"};
         mdl_car_list.setColumnIdentifiers(col_car_list);
         row_car_list = new Object[col_car_list.length];
         loadCarModel();
@@ -108,7 +116,34 @@ public class CustomerGUI extends JFrame {
         tbl_car_addition.setModel(mdl_addition_list);
         tbl_car_addition.getTableHeader().setReorderingAllowed(false);
         tbl_car_addition.getColumnModel().getColumn(0).setMaxWidth(75);
+        tbl_car_addition.getColumnModel().getColumn(1).setMaxWidth(220);
+        tbl_car_addition.getColumnModel().getColumn(2).setMaxWidth(75);
+        tbl_car_addition.getColumnModel().getColumn(3).setMaxWidth(75);
 //ek hizmet tablosu kodları bitişi
+
+//kiralama dönemi tablosu kodları başlangıcı
+        mdl_car_season_list = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0)
+                    return false;
+                return super.isCellEditable(row, column);
+            }
+        };
+
+        Object[] col_car_season_list = {"Başlangıç Tarihi", "Bitiş Tarihi"};
+        mdl_car_season_list.setColumnIdentifiers(col_car_season_list);
+        row_car_season_list = new Object[col_car_season_list.length];
+        loadSeasonModel(select_car_id);
+        tbl_car_season.setModel(mdl_car_season_list);
+        tbl_car_season.getTableHeader().setReorderingAllowed(false);
+       // tbl_car_season.getColumnModel().getColumn(0).setMaxWidth(100);
+       // tbl_car_season.getColumnModel().getColumn(1).setMaxWidth(100);
+//kiralama dönemi tablosu kodları bitişi
+
+
+
+
 
 //Rezervasyon yapılmış araç tablosu kodları başlangıcı
         mdl_reserved_car_list = new DefaultTableModel(){
@@ -119,7 +154,7 @@ public class CustomerGUI extends JFrame {
                 return super.isCellEditable(row, column);
             }
         };
-        Object[] col_reserved_car_list = {"id", "Firma", "Şehir", "Marka", "Model", "Tip", "Vites", "Yakıt", "Kiralama Tarihi", "Teslim Tarihi", "Toptam Tutar (TL)"};
+        Object[] col_reserved_car_list = {"id", "Firma", "Şehir", "Marka", "Model", "Model Yılı", "Tip", "Vites", "Yakıt", "Kiralama Tarihi", "Teslim Tarihi", "Toptam Tutar (TL)"};
         mdl_reserved_car_list.setColumnIdentifiers(col_reserved_car_list);
         row_reserved_car_list = new Object[col_reserved_car_list.length];
         loadReservedCarModel();
@@ -150,6 +185,7 @@ public class CustomerGUI extends JFrame {
             }
             fld_car_id.setText(Integer.toString(select_car_id));
             loadAdditionModel(select_car_id);
+            loadSeasonModel(select_car_id);
         });
 
         loadCityCombo();
@@ -157,7 +193,6 @@ public class CustomerGUI extends JFrame {
 
 
  //araç filtreleme butonu
-
         /*int comparison=d.compareTo(d1);
         It returns the value 0 if d1 is equal to d.  return 0
         It returns a value less than 0 if this d is before the d1.   return -1
@@ -272,11 +307,13 @@ public class CustomerGUI extends JFrame {
                 }
                 else {
                     loadCarModel(searchingCarWithDate);
-
                 }
             }
             DefaultTableModel clearAdditionModel = (DefaultTableModel) tbl_car_addition.getModel();
             clearAdditionModel.setRowCount(0);
+
+            DefaultTableModel clearCarSeasonModel = (DefaultTableModel) tbl_car_season.getModel();
+            clearCarSeasonModel.setRowCount(0);
         });
 
 //rezervasyon butonu
@@ -323,6 +360,10 @@ public class CustomerGUI extends JFrame {
                             public void windowClosed(WindowEvent e) {
                                 loadReservedCarModel();
                                 loadCarModel();
+                                DefaultTableModel clearModel = (DefaultTableModel) tbl_car_addition.getModel();
+                                clearModel.setRowCount(0);
+                                DefaultTableModel clearCarSeasonModel = (DefaultTableModel) tbl_car_season.getModel();
+                                clearCarSeasonModel.setRowCount(0);
                                 fld_car_id.setText(null);
                                 fld_start_date.setText(null);
                                 fld_end_date.setText(null);
@@ -374,6 +415,7 @@ public class CustomerGUI extends JFrame {
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getCity();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getBrand();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getModel();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getYear();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getType();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getFuel();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getTransmission();
@@ -393,6 +435,7 @@ public class CustomerGUI extends JFrame {
             row_car_list[i++] = obj.getId();
             row_car_list[i++] = obj.getBrand();
             row_car_list[i++] = obj.getModel();
+            row_car_list[i++] = obj.getYear();
             row_car_list[i++] = obj.getType();
             row_car_list[i++] = obj.getPrice();
             row_car_list[i++] = obj.getTransmission();
@@ -416,6 +459,7 @@ public class CustomerGUI extends JFrame {
                 row_car_list[i++] = obj.getId();
                 row_car_list[i++] = obj.getBrand();
                 row_car_list[i++] = obj.getModel();
+                row_car_list[i++] = obj.getYear();
                 row_car_list[i++] = obj.getType();
                 row_car_list[i++] = obj.getPrice();
                 row_car_list[i++] = obj.getTransmission();
@@ -437,9 +481,18 @@ public class CustomerGUI extends JFrame {
             row_addition_list[i++] = obj.getExplanation();
             row_addition_list[i++] = obj.getPrice();
             row_addition_list[i++] = obj.getCar_id();
-
             mdl_addition_list.addRow(row_addition_list);
+        }
+    }
 
+    private void loadSeasonModel(int id) {
+        DefaultTableModel clearModel = (DefaultTableModel) tbl_car_season.getModel();
+        clearModel.setRowCount(0);
+        Car obj = Car.getFetch(id);
+        if (obj != null){
+            row_car_season_list[0] = obj.getSeason_start();
+            row_car_season_list[1] = obj.getSeason_end();
+            mdl_car_season_list.addRow(row_car_season_list);
         }
     }
 
@@ -449,10 +502,11 @@ public class CustomerGUI extends JFrame {
         cmb_city.addItem(new Item(0,null));
         ArrayList<String> cityName = new ArrayList<>();
         for (Car obj : Car.getList()){
-            if (!cityName.contains(obj.getCity())){
-                cmb_city.addItem(new Item(obj.getId(), obj.getCity()));
+            String city = obj.getCity().substring(0,1).toUpperCase() + obj.getCity().substring(1).toLowerCase();
+            if (!cityName.contains(city)){
+                cmb_city.addItem(new Item(obj.getId(), city));
             }
-            cityName.add(obj.getCity());
+            cityName.add(city);
         }
     }
 

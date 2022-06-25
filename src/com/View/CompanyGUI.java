@@ -2,10 +2,7 @@ package com.View;
 
 import com.Helper.Config;
 import com.Helper.Helper;
-import com.Model.Addition;
-import com.Model.Car;
-import com.Model.Company;
-import com.Model.ReservedCar;
+import com.Model.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,6 +30,8 @@ public class CompanyGUI extends JFrame{
     private JPanel pnl_reservedcar;
     private JScrollPane scrl_reserved_car;
     private JTable tbl_reserved_car;
+    private JScrollPane scrl_customer_info;
+    private JTable tbl_customer_info;
 
     DefaultTableModel mdl_car_list;
     private Object[] row_car_list;
@@ -45,6 +44,11 @@ public class CompanyGUI extends JFrame{
     DefaultTableModel mdl_reserved_car_list;
     private Object[] row_reserved_car_list;
 
+    DefaultTableModel mdl_customer_info;
+    private Object[] row_customer_info;
+
+    private int reserved_car_id;
+
     private Company company;
 
     public CompanyGUI(Company company) {
@@ -54,7 +58,7 @@ public class CompanyGUI extends JFrame{
         setLocation(Helper.screenCenterPoint("x", getSize()), Helper.screenCenterPoint("y", getSize()));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle(Config.PROJECT_TITLE);
-        setResizable(false);
+        //setResizable(false);
         setVisible(true);
 
 //Araç tablosu kodları başlangıcı
@@ -67,7 +71,7 @@ public class CompanyGUI extends JFrame{
             }
         };
 
-        Object[] col_car_list = {"id", "Marka", "Model", "Tip", "Sezon Başlangıcı", "Sezon Bitişi", "Fiyat", "Vites", "Yakıt"};
+        Object[] col_car_list = {"id", "Marka", "Model", "Model Yılı", "Tip", "Sezon Başlangıcı", "Sezon Bitişi", "Fiyat", "Vites", "Yakıt"};
         mdl_car_list.setColumnIdentifiers(col_car_list);
         row_car_list = new Object[col_car_list.length];
         loadCarModel();
@@ -93,6 +97,9 @@ public class CompanyGUI extends JFrame{
         tbl_car_addition.setModel(mdl_addition_list);
         tbl_car_addition.getTableHeader().setReorderingAllowed(false);
         tbl_car_addition.getColumnModel().getColumn(0).setMaxWidth(75);
+        tbl_car_addition.getColumnModel().getColumn(1).setMaxWidth(175);
+        tbl_car_addition.getColumnModel().getColumn(2).setMaxWidth(75);
+        tbl_car_addition.getColumnModel().getColumn(3).setMaxWidth(75);
 //ek hizmet tablosu kodları bitişi
 
 
@@ -105,7 +112,7 @@ public class CompanyGUI extends JFrame{
                 return super.isCellEditable(row, column);
             }
         };
-        Object[] col_reserved_car_list = {"id", "Firma", "Şehir", "Marka", "Model", "Tip", "Vites", "Yakıt", "Kiralama Tarihi", "Teslim Tarihi", "Toplam Tutar (TL)"};
+        Object[] col_reserved_car_list = {"id", "Firma", "Şehir", "Marka", "Model", "Model Yılı", "Tip", "Vites", "Yakıt", "Kiralama Tarihi", "Teslim Tarihi", "Toplam Tutar (TL)"};
         mdl_reserved_car_list.setColumnIdentifiers(col_reserved_car_list);
         row_reserved_car_list = new Object[col_reserved_car_list.length];
         loadReservedCarModel();
@@ -113,6 +120,35 @@ public class CompanyGUI extends JFrame{
         tbl_reserved_car.getTableHeader().setReorderingAllowed(false);
         tbl_reserved_car.getColumnModel().getColumn(0).setMaxWidth(75);
 //Rezervasyon yapılmış araç tablosu kodları bitişi
+
+//Araç kiralayan kişi bilgisi tablosu kodları başlangıcı
+        mdl_customer_info = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                if (column == 0)
+                    return false;
+                return super.isCellEditable(row, column);
+            }
+        };
+
+        Object[] col_customer_info = {"Ad Soyad", "Telefon", "Email"};
+        mdl_customer_info.setColumnIdentifiers(col_customer_info);
+        row_customer_info = new Object[col_customer_info.length];
+        loadCustomerInfo(reserved_car_id);
+        tbl_customer_info.setModel(mdl_customer_info);
+        tbl_customer_info.getTableHeader().setReorderingAllowed(false);
+//Araç kiralayan kişi bilgisi tablosu kodları bitişi
+
+//müşteri bilgilerini listelemek için araç id sini alma
+        tbl_reserved_car.getSelectionModel().addListSelectionListener(e -> {
+            try{
+                reserved_car_id = Integer.parseInt(tbl_reserved_car.getValueAt(tbl_reserved_car.getSelectedRow(),0).toString());
+            }
+            catch (Exception ex){
+
+            }
+            loadCustomerInfo(reserved_car_id);
+        });
 
 
 //Ek hizmetleri listelemek için araç id sini alma
@@ -125,8 +161,6 @@ public class CompanyGUI extends JFrame{
             }
             fld_car_id.setText(Integer.toString(select_car_id));
             loadAdditionModel(select_car_id);
-
-            //select_car_id = 0;
         });
 
 //araç ekle butonu kodları başlangıcı
@@ -183,6 +217,7 @@ public class CompanyGUI extends JFrame{
                 row_car_list[i++] = obj.getId();
                 row_car_list[i++] = obj.getBrand();
                 row_car_list[i++] = obj.getModel();
+                row_car_list[i++] = obj.getYear();
                 row_car_list[i++] = obj.getType();
                 row_car_list[i++] = obj.getSeason_start();
                 row_car_list[i++] = obj.getSeason_end();
@@ -222,6 +257,7 @@ public class CompanyGUI extends JFrame{
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getCity();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getBrand();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getModel();
+            row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getYear();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getType();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getFuel();
             row_reserved_car_list[i++] = Car.getFetch(obj.getCar_id()).getTransmission();
@@ -232,6 +268,21 @@ public class CompanyGUI extends JFrame{
         }
     }
 
+    private void loadCustomerInfo(int reserved_car_id) {
+        DefaultTableModel clearModel = (DefaultTableModel) tbl_customer_info.getModel();
+        clearModel.setRowCount(0);
+
+        try {
+            Customer customer = (Customer) User.getByID(ReservedCar.getFetch(reserved_car_id).getCustomer_id());
+            row_customer_info[0] = customer.getName();
+            row_customer_info[1] = customer.getPhone();
+            row_customer_info[2] = customer.getEmail();
+            mdl_customer_info.addRow(row_customer_info);
+        }
+        catch (Exception e){
+
+        }
+    }
 
 
 }
