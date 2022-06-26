@@ -150,7 +150,6 @@ public class CompanyGUI extends JFrame{
             loadCustomerInfo(reserved_car_id);
         });
 
-
 //Ek hizmetleri listelemek için araç id sini alma
         tbl_car_list.getSelectionModel().addListSelectionListener(e -> {
             try{
@@ -199,13 +198,11 @@ public class CompanyGUI extends JFrame{
         });
 //ek özellik ekle butonu kodları bitişi
 
-
         btn_logout.addActionListener(e -> {
             dispose();
             LoginGUI log = new LoginGUI();
         });
     }
-
 
     private void loadCarModel() {
         DefaultTableModel clearModel = (DefaultTableModel) tbl_car_list.getModel();
@@ -283,6 +280,5 @@ public class CompanyGUI extends JFrame{
 
         }
     }
-
 
 }

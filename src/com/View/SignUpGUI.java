@@ -30,9 +30,6 @@ public class SignUpGUI extends JFrame {
         setResizable(false);
         setVisible(true);
 
-
-
-
         btn_sign.addActionListener(e -> {
             if (Helper.isFieldEmpty(fld_sign_name) || Helper.isFieldEmpty(fld_sign_email) || Helper.isFieldEmpty(fld_sign_pass)
             || cmb_type.getSelectedItem() == null || Helper.isFieldEmpty(fld_phone) ||Helper.isFieldEmpty(fld_city) ){
@@ -63,7 +60,6 @@ public class SignUpGUI extends JFrame {
                 dispose();
             }
         });
-
 
     }
 }

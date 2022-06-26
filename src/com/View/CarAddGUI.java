@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-
 public class CarAddGUI extends JFrame {
     private JPanel wrapper;
     private JPanel pnl_car_add_top;
@@ -102,8 +101,6 @@ public class CarAddGUI extends JFrame {
             }
         });
 //Araç ekleme butonu kodları başlangıcı
-
-
 
     }
 }

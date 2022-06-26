@@ -141,10 +141,6 @@ public class CustomerGUI extends JFrame {
        // tbl_car_season.getColumnModel().getColumn(1).setMaxWidth(100);
 //kiralama dönemi tablosu kodları bitişi
 
-
-
-
-
 //Rezervasyon yapılmış araç tablosu kodları başlangıcı
         mdl_reserved_car_list = new DefaultTableModel(){
             @Override
@@ -382,8 +378,6 @@ public class CustomerGUI extends JFrame {
             LoginGUI log = new LoginGUI();
         });
 
-
-
 //rezervasyon iptal butonu kodları
         btn_reserved_car_cancel.addActionListener(e -> {
             if (Helper.isFieldEmpty(fld_reserved_car_id)){
@@ -522,8 +516,4 @@ public class CustomerGUI extends JFrame {
             carType.add(obj.getType());
         }
     }
-
-
-
-
 }

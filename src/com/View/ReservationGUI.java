@@ -200,6 +200,4 @@ public class ReservationGUI extends JFrame {
         fld_price.setText(String.valueOf(total_price1));
     }
 
-
-
 }

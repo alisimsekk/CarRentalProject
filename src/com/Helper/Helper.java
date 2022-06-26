@@ -70,18 +70,4 @@ public class Helper {
         return area.getText().trim().isEmpty();
     }
 
-//silme işlemlerinde emin misin ekranına ait metod
-    public static boolean confirm(String str) {
-        optionPaneTR();
-        String msg;
-        switch (str){
-            case "sure":
-                msg = "Silme işlemi yapılacak, emin misiniz?";
-                break;
-            default:
-                msg = str;
-        }
-        return JOptionPane.showConfirmDialog(null,msg,"Son Kararın Mı?",JOptionPane.YES_NO_OPTION) ==0;
-    }
-
 }

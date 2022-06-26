@@ -30,7 +30,6 @@ public class User {
 
     }
 
-
     public int getId() {
         return id;
     }
@@ -178,7 +177,6 @@ public class User {
         }
         return true;
     }
-
 }
 
 
