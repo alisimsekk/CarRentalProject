@@ -1,4 +1,4 @@
-package com.Helper;
+package com.helper;
 
 import javax.swing.*;
 import java.awt.*;

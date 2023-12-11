@@ -1,7 +1,7 @@
 package com.View;
 
-import com.Helper.Config;
-import com.Helper.Helper;
+import com.helper.Config;
+import com.helper.Helper;
 import com.Model.Customer;
 import com.Model.Company;
 import com.Model.User;

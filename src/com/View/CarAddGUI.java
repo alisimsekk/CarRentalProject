@@ -1,7 +1,7 @@
 package com.View;
 
-import com.Helper.Config;
-import com.Helper.Helper;
+import com.helper.Config;
+import com.helper.Helper;
 import com.Model.Car;
 import com.Model.Company;
 

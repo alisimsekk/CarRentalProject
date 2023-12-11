@@ -1,7 +1,7 @@
 package com.Model;
 
 
-import com.Helper.DBConnector;
+import com.helper.DBConnector;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

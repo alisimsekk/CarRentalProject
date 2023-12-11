@@ -1,8 +1,8 @@
 package com.View;
 
-import com.Helper.Config;
-import com.Helper.Helper;
-import com.Helper.Item;
+import com.helper.Config;
+import com.helper.Helper;
+import com.helper.Item;
 import com.Model.*;
 
 import javax.swing.*;
